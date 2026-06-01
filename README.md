@@ -1,4 +1,4 @@
-# 🐉 Golden Dragon - Chinese Takeaway Order System
+# Chinese Takeaway Order System
 
 A self-contained Chinese takeaway ordering system with a customer-facing menu and a kitchen dashboard.
 
