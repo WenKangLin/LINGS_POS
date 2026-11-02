@@ -40,8 +40,15 @@ Then visit http://localhost:3001
 ## Tech Stack
 
 - **Frontend**: React, Vite, TailwindCSS, React Router, Lucide Icons
-- **Backend**: Express.js (Node.js)
-- **Storage**: In-memory (resets on server restart)
+- **Backend**: Express.js (Node.js 22.13+ — uses the built-in `node:sqlite` module)
+- **Storage**: SQLite at `data/orders.db` (WAL mode). An existing `data/orders.json` is imported automatically on first start and renamed to `.migrated`.
+- **Menu**: `server/menu.json` — edit prices/allergens there; the server reloads it automatically on save (or `POST /api/menu/reload`). If the JSON is invalid the previous menu is kept and the error is logged. Each item has `allergens` (ids from the `allergens` map); add `removable: [ids]` to flag allergens the kitchen can leave out on request, which the allergen filter shows as "ask kitchen" instead of "not available". Sections flagged `mainCourse: true` feed the main-course counter; the `modifiers` list is the set of chips shown when adding a dish.
+- **Prices** are always resolved server-side from `menu.json`; the client only sends item ids and quantities. Delivery orders require an address.
+- **Backups**: a snapshot of the DB is written to `data/backups/orders-YYYY-MM-DD.db` every night at 04:00 (last 30 kept). `POST /api/backup` writes one on demand.
+
+## Allergen Filter
+
+The "Avoid" bar at the top of the menu lets staff select one or more allergens a customer must avoid. Dishes containing them are tinted red; dishes where every matching allergen is marked `removable` are highlighted amber. Protein choices in Build Your Own and Chef's Specials carry their own allergens (e.g. King Prawn → Crustaceans) and are merged into the cart item.
 
 ## API Endpoints
 

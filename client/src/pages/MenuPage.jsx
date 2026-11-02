@@ -1,21 +1,39 @@
 import { useState, useEffect, useRef } from 'react';
-import { ShoppingCart, Plus, Minus, Trash2, Send, CheckCircle, Leaf, X } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash2, Send, CheckCircle, Leaf, X, AlertTriangle, Info, Pencil } from 'lucide-react';
 
-function AllergenBadges({ allergens, allergenMap }) {
-  if (!allergens || allergens.length === 0) return null;
+function AllergenBadges({ allergens, allergenMap, activeFilters = [], className = '' }) {
+  if (!allergens || allergens.length === 0) return <p className={`text-stone-500 text-xs ${className}`}>No listed allergens</p>;
   return (
-    <div className="flex gap-1 mt-2 overflow-x-auto scrollbar-hide">
-      {allergens.map(a => (
-        <span key={a} title={allergenMap[a]} className="text-[10px] px-1.5 py-0.5 bg-amber-500/15 text-amber-400 border border-amber-500/30 rounded cursor-help whitespace-nowrap flex-shrink-0">
-          {allergenMap[a]}
-        </span>
-      ))}
+    <div className={`flex gap-1 flex-wrap ${className}`}>
+      {allergens.map(a => {
+        const hit = activeFilters.includes(a);
+        return (
+          <span key={a} className={`text-xs px-1.5 py-0.5 rounded border whitespace-nowrap ${hit ? 'bg-red-500/20 text-red-300 border-red-500/50 font-bold' : 'bg-amber-500/15 text-amber-400 border-amber-500/30'}`}>
+            {allergenMap[a]}
+          </span>
+        );
+      })}
     </div>
   );
 }
 
-function ItemRow({ item, allergenMap, currency, onAdd, onAddWithOptions, onBuildYourOwn, onDrinkOptions, onProteinOptions, cartQty }) {
-  const isGlutenFree = !item.allergens?.includes(1);
+// Returns 'unsafe' | 'adaptable' | 'ok' for an item against the selected allergen filters.
+// 'adaptable' means every matching allergen is listed in item.removable (kitchen can leave it out).
+function allergenStatus(item, filters) {
+  if (!filters.length) return 'ok';
+  const hits = (item.allergens || []).filter(a => filters.includes(a));
+  if (!hits.length) return 'ok';
+  const removable = item.removable || [];
+  return hits.every(a => removable.includes(a)) ? 'adaptable' : 'unsafe';
+}
+
+function ItemRow({ item, allergenMap, currency, onAdd, onAddWithOptions, onBuildYourOwn, onDrinkOptions, onProteinOptions, onInfo, cartQty, filters }) {
+  const status = allergenStatus(item, filters);
+  const cardStyle = {
+    ok: 'bg-stone-800 border-stone-700 hover:border-stone-600',
+    adaptable: 'bg-amber-900/30 border-amber-500/60 hover:border-amber-400',
+    unsafe: 'bg-red-950/40 border-red-500/60 opacity-60',
+  }[status];
   const handleAdd = () => {
     if (item.buildYourOwn) {
       onBuildYourOwn(item);
@@ -30,34 +48,38 @@ function ItemRow({ item, allergenMap, currency, onAdd, onAddWithOptions, onBuild
     }
   };
   return (
-    <div className="bg-stone-800 px-4 py-3 rounded-lg border border-stone-700 hover:border-stone-600 transition-all group cursor-pointer" onClick={handleAdd}>
+    <div className={`px-4 py-3 rounded-lg border transition-all group cursor-pointer ${cardStyle}`} onClick={handleAdd}>
       <div className="flex justify-between items-start gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-white font-medium tracking-wide text-sm">{item.name}</p>
+            <p className={`font-semibold tracking-wide text-lg leading-tight ${status === 'unsafe' ? 'text-red-300' : 'text-white'}`}>{item.name}</p>
             {item.vegetarian && (
               <span title="Vegetarian" className="flex items-center gap-0.5 px-1 py-0.5 rounded bg-green-500/15 border border-green-500/30 text-green-400 text-[10px] font-bold">
                 <Leaf className="w-2.5 h-2.5" /> VG
               </span>
             )}
-            {isGlutenFree && (
-              <span title="Gluten Free" className="px-1 py-0.5 rounded bg-sky-500/15 border border-sky-500/30 text-sky-400 text-[10px] font-bold">GF</span>
-            )}
+            {status === 'adaptable' && <span className="text-xs font-bold text-amber-300 uppercase">Ask kitchen</span>}
           </div>
-          {item.description && <p className="text-stone-500 text-xs mt-0.5">{item.description}</p>}
-          <AllergenBadges allergens={item.allergens} allergenMap={allergenMap} />
+          {item.description && <p className="text-stone-500 text-sm mt-0.5">{item.description}</p>}
         </div>
-        <div className="flex flex-col items-center gap-1 flex-shrink-0">
-          {item.price != null && <span className="text-amber-500 font-bold text-xs whitespace-nowrap">{currency}{item.price.toFixed(2)}</span>}
+        <div className="flex flex-col items-end gap-1 flex-shrink-0">
+          {item.price != null && <span className="text-amber-500 font-bold text-base whitespace-nowrap">{currency}{item.price.toFixed(2)}</span>}
           <div className="flex items-center gap-1">
             {cartQty > 0 && (
               <span className="text-[10px] font-bold bg-amber-500 text-stone-900 rounded-full w-5 h-5 flex items-center justify-center">{cartQty}</span>
             )}
             <button
-              onClick={e => { e.stopPropagation(); handleAdd(); }}
-              className="w-7 h-7 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 hover:bg-amber-500 hover:text-stone-900 transition-all flex items-center justify-center opacity-70 group-hover:opacity-100"
+              onClick={e => { e.stopPropagation(); onInfo(item); }}
+              title="Allergen info"
+              className="w-7 h-7 rounded-full text-stone-500 hover:text-white hover:bg-stone-700 transition-all flex items-center justify-center"
             >
-              <Plus size={14} />
+              <Info size={14} />
+            </button>
+            <button
+              onClick={e => { e.stopPropagation(); handleAdd(); }}
+              className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 hover:bg-amber-500 hover:text-stone-900 transition-all flex items-center justify-center"
+            >
+              <Plus size={16} />
             </button>
           </div>
         </div>
@@ -71,11 +93,15 @@ export default function MenuPage() {
   const [cart, setCart] = useState([]);
   const [activeSection, setActiveSection] = useState('');
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [orderError, setOrderError] = useState(null);
   const [form, setForm] = useState({ customerName: '', phone: '', address: '', notes: '', orderType: 'collection' });
   const [optionsPopup, setOptionsPopup] = useState(null); // { item, showSauces: false }
   const [buildPopup, setBuildPopup] = useState(null); // { sauceItem, size: null, protein: null, section }
   const [drinkPopup, setDrinkPopup] = useState(null); // { item }
   const [proteinPopup, setProteinPopup] = useState(null); // { item with proteinOptions }
+  const [infoPopup, setInfoPopup] = useState(null); // item
+  const [modifierPopup, setModifierPopup] = useState(null); // { item, selected: [], note, qty }
+  const [filters, setFilters] = useState([]); // allergen ids to avoid
   const sectionRefs = useRef(new Map());
   const centreRef = useRef(null);
 
@@ -113,11 +139,11 @@ export default function MenuPage() {
     }
   };
 
-  const addToCart = (item) => {
+  const addToCart = (item, qty = 1) => {
     setCart(prev => {
       const existing = prev.find(i => i.id === item.id);
-      if (existing) return prev.map(i => (i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i));
-      return [...prev, { ...item, quantity: 1 }];
+      if (existing) return prev.map(i => (i.id === item.id ? { ...i, quantity: i.quantity + qty } : i));
+      return [...prev, { ...item, quantity: qty }];
     });
   };
 
@@ -130,15 +156,16 @@ export default function MenuPage() {
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const currency = menu?.currency || '€';
-  const cartMap = Object.fromEntries(cart.map(i => [i.id, i.quantity]));
+  const allergenMap = menu?.allergens || {};
+  const modifierOptions = menu?.modifiers || [];
+  // Quantity per menu item, collapsing option/modifier variants (ids look like "12_BBQ|No Onion")
+  const cartMap = {};
+  cart.forEach(i => { const base = String(i.baseId ?? i.id).split('_')[0]; cartMap[base] = (cartMap[base] || 0) + i.quantity; });
 
-  // Main course sections that need the counter
-  const mainCourseSections = ["Chef's Special Dishes", "Sweet & Sour Dishes"];
-
-  // Collect all item IDs from main course sections
+  // Collect all item IDs from main course sections (flagged with mainCourse: true in menu.json)
   const mainCourseIds = new Set();
   if (menu) {
-    menu.sections.filter(s => mainCourseSections.includes(s.name)).forEach(s => {
+    menu.sections.filter(s => s.mainCourse).forEach(s => {
       if (s.items) s.items.forEach(i => mainCourseIds.add(i.id));
       if (s.subsections) s.subsections.forEach(sub => sub.items.forEach(i => mainCourseIds.add(i.id)));
     });
@@ -151,9 +178,10 @@ export default function MenuPage() {
   }
   const sizeKeys = ['small', 'medium', 'large', 'smallTray', 'largeTray'];
   const mainCourseCount = cart.filter(i => {
-    if (mainCourseIds.has(i.id)) return true;
+    const baseId = i.baseId ?? i.id;
+    if (mainCourseIds.has(baseId)) return true;
     // Check if this is a Build Your Own protein item (not a sauce-only size)
-    const idStr = String(i.id);
+    const idStr = String(baseId);
     for (const byoId of buildYourOwnIds) {
       const prefix = String(byoId) + '_';
       if (idStr.startsWith(prefix) && !sizeKeys.includes(idStr.slice(prefix.length))) return true;
@@ -173,16 +201,40 @@ export default function MenuPage() {
     quickAddItems.sort((a, b) => quickAddNames.indexOf(a.name) - quickAddNames.indexOf(b.name));
   }
 
-  // Collect sauce names from Chef's Special subsections for the "Other" option
-  const chefSauces = [];
-  if (menu) {
-    const chefSection = menu.sections.find(s => s.name === "Chef's Special Dishes");
-    if (chefSection?.subsections) {
-      chefSection.subsections.forEach(sub => {
-        if (sub.name !== 'Pork Dishes') chefSauces.push(sub.name);
-      });
-    }
-  }
+  // Build Your Own sauces double as the "Other" sauce list for wings / ribs
+  const buildSection = menu?.sections.find(s => s.buildYourOwn);
+  const chefSauces = (buildSection?.items || []).map(i => i.name);
+
+  const mergeField = (field, ...parts) => [...new Set(parts.flatMap(p => p?.[field] || []))].sort((a, b) => a - b);
+  const mergeAllergens = (...parts) => mergeField('allergens', ...parts);
+  const toggleFilter = (id) => setFilters(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
+
+  // Every add (except drinks) goes through the modifier popup.
+  // Allergens the kitchen can leave out ("removable") that match an active filter are pre-ticked as "No X".
+  const openModifiers = (cartItem) => {
+    const removable = cartItem.removable || [];
+    const autoMods = (cartItem.allergens || []).filter(a => filters.includes(a) && removable.includes(a)).map(a => `No ${allergenMap[a]}`);
+    setModifierPopup({ item: cartItem, selected: autoMods, note: '', qty: 1 });
+  };
+  // Re-open the popup for an existing cart line, pre-filled with its current selections
+  const editCartLine = (line) => {
+    const { id, name, quantity, baseId, baseName, modifiers = [], note = '', ...rest } = line;
+    const base = { ...rest, id: baseId ?? id, name: baseName ?? name };
+    setModifierPopup({ item: base, selected: modifiers, note, qty: quantity, editingId: id });
+  };
+  const toggleModifier = (mod) => setModifierPopup(p => ({ ...p, selected: p.selected.includes(mod) ? p.selected.filter(m => m !== mod) : [...p.selected, mod] }));
+  const confirmModifiers = () => {
+    if (!modifierPopup) return;
+    const { item, selected, note, qty, editingId } = modifierPopup;
+    const trimmed = note.trim();
+    const extras = [...selected, ...(trimmed ? [trimmed] : [])];
+    const suffix = extras.length ? ` (${extras.join(', ')})` : '';
+    const idSuffix = extras.length ? `|${extras.join('|')}` : '';
+    const line = { ...item, baseId: item.id, baseName: item.name, modifiers: selected, note: trimmed, id: `${item.id}${idSuffix}`, name: `${item.name}${suffix}` };
+    if (editingId) removeFromCart(editingId);
+    addToCart(line, qty);
+    setModifierPopup(null);
+  };
 
   const openOptionsPopup = (item) => {
     setOptionsPopup({ item, showSauces: false });
@@ -195,14 +247,18 @@ export default function MenuPage() {
       return;
     }
     const { item } = optionsPopup;
-    const label = option === 'Plain' ? '' : ` (${option})`;
-    const cartItem = { ...item, id: `${item.id}_${option}`, name: `${item.name}${label}` };
-    addToCart(cartItem);
+    // options are plain strings (wing styles) or { name, allergens, removable } (e.g. rice choice)
+    const opt = typeof option === 'string' ? { name: option } : option;
+    const label = opt.name === 'Plain' ? '' : ` (${opt.name})`;
+    const sauce = optionsPopup.showSauces ? buildSection?.items.find(i => i.name === opt.name) : null;
+    const { options, skipModifiers, ...base } = item;
+    const cartItem = { ...base, id: `${item.id}_${opt.name}`, name: `${item.name}${label}`, allergens: mergeAllergens(item, sauce, opt), removable: mergeField('removable', item, sauce, opt) };
     setOptionsPopup(null);
+    if (skipModifiers) addToCart({ ...cartItem, baseId: cartItem.id, baseName: cartItem.name });
+    else openModifiers(cartItem);
   };
 
   // Build Your Own handlers
-  const buildSection = menu?.sections.find(s => s.buildYourOwn);
   const openBuildPopup = (sauceItem) => {
     setBuildPopup({ sauceItem, size: null, protein: null, section: buildSection });
   };
@@ -210,7 +266,7 @@ export default function MenuPage() {
     if (!buildPopup) return;
     const { sauceItem, size, protein, section } = buildPopup;
     if (!size && !protein) return;
-    let price, label, cartId;
+    let price, label, cartId, allergens = sauceItem.allergens || [], removable = sauceItem.removable || [];
     if (size) {
       price = section.sizes[size];
       const cap = size.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
@@ -220,9 +276,11 @@ export default function MenuPage() {
       price = protein.price;
       label = `${protein.name} in ${sauceItem.name}`;
       cartId = `${sauceItem.id}_${protein.name}`;
+      allergens = mergeAllergens(sauceItem, protein);
+      removable = mergeField('removable', sauceItem, protein);
     }
-    addToCart({ id: cartId, name: label, price, allergens: sauceItem.allergens });
     setBuildPopup(null);
+    openModifiers({ id: cartId, name: label, price, allergens, removable });
   };
 
   // Drink options handler
@@ -237,19 +295,24 @@ export default function MenuPage() {
   const openProteinPopup = (item) => setProteinPopup(item);
   const addProteinChoice = (protein) => {
     const label = `${protein.name} in ${proteinPopup.name}`;
-    addToCart({ id: `${proteinPopup.id}_${protein.name}`, name: label, price: protein.price, allergens: proteinPopup.allergens });
+    const cartItem = { id: `${proteinPopup.id}_${protein.name}`, name: label, price: protein.price, allergens: mergeAllergens(proteinPopup, protein), removable: mergeField('removable', proteinPopup, protein) };
     setProteinPopup(null);
+    openModifiers(cartItem);
   };
 
+  const needsAddress = form.orderType === 'delivery' && !form.address.trim();
+  const canSubmit = form.customerName && form.phone && !needsAddress && cart.length > 0;
+
   const submitOrder = async () => {
-    if (!form.customerName || !form.phone || cart.length === 0) return;
+    if (!canSubmit) return;
+    setOrderError(null);
     try {
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          items: cart.map(({ id, name, price, quantity }) => ({ id, name, price, quantity })),
+          items: cart.map(({ id, name, quantity }) => ({ id, name, quantity })),
         }),
       });
       if (res.ok) {
@@ -257,15 +320,17 @@ export default function MenuPage() {
         setCart([]);
         setForm({ customerName: '', phone: '', address: '', notes: '', orderType: 'collection' });
         setTimeout(() => setOrderSuccess(false), 3000);
+      } else {
+        const body = await res.json().catch(() => ({}));
+        setOrderError(body.error || `Order failed (${res.status})`);
       }
-    } catch (err) { console.error(err); }
+    } catch (err) { console.error(err); setOrderError('Could not reach the server'); }
   };
 
   if (!menu) {
     return <div className="flex items-center justify-center py-32"><div className="text-stone-500 text-lg">Loading menu...</div></div>;
   }
 
-  const allergenMap = menu.allergens || {};
 
   return (
     <div className="bg-stone-900 overflow-hidden" style={{ height: 'calc(100vh - 5rem)' }}>
@@ -308,7 +373,7 @@ export default function MenuPage() {
                     {quickAddItems.map(item => (
                       <button
                         key={item.id}
-                        onClick={() => addToCart(item)}
+                        onClick={() => item.options?.length ? openOptionsPopup(item) : addToCart(item)}
                         className="w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg bg-stone-800 border border-stone-700 hover:border-stone-600 hover:bg-stone-750 transition-all group text-left"
                       >
                         <div className="min-w-0">
@@ -333,17 +398,39 @@ export default function MenuPage() {
 
           {/* ===== CENTRE: Menu Items ===== */}
           <div ref={centreRef} className="flex-1 min-w-0 overflow-y-auto scrollbar-hide">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <h1 className="text-4xl md:text-5xl mb-3 text-white font-bold tracking-wider">OUR MENU</h1>
-              <div className="flex justify-center gap-3 text-xs">
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-green-500/15 border border-green-500/30 text-green-400 font-bold">
-                  <Leaf className="w-3 h-3" /> VG — Vegetarian
+            {/* Allergen filter bar */}
+            <div className="sticky top-0 z-10 bg-stone-900/95 backdrop-blur-sm pb-3 mb-4 border-b border-stone-800">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="flex items-center gap-1 text-[10px] font-bold text-stone-500 uppercase tracking-widest mr-1">
+                  <AlertTriangle size={12} /> Avoid
                 </span>
-                <span className="px-2 py-0.5 rounded bg-sky-500/15 border border-sky-500/30 text-sky-400 font-bold">
-                  GF — Gluten Free
-                </span>
+                {Object.entries(allergenMap).map(([idStr, name]) => {
+                  const aid = Number(idStr);
+                  const on = filters.includes(aid);
+                  return (
+                    <button
+                      key={aid}
+                      onClick={() => toggleFilter(aid)}
+                      className={`px-2.5 py-1 rounded-full text-xs font-bold border transition-colors ${
+                        on ? 'bg-red-500 text-white border-red-500' : 'bg-stone-800 text-stone-300 border-stone-700 hover:border-stone-500'
+                      }`}
+                    >
+                      {name}
+                    </button>
+                  );
+                })}
+                {filters.length > 0 && (
+                  <button onClick={() => setFilters([])} className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold text-stone-400 hover:text-white border border-transparent hover:border-stone-600">
+                    <X size={12} /> Clear
+                  </button>
+                )}
               </div>
+              {filters.length > 0 && (
+                <div className="flex gap-4 mt-2 text-[11px] text-stone-400">
+                  <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border border-red-500/60 bg-red-950/40" /> Contains — not available</span>
+                  <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border border-amber-500/60 bg-amber-900/30" /> Can be made without — check with kitchen</span>
+                </div>
+              )}
             </div>
 
 
@@ -360,7 +447,7 @@ export default function MenuPage() {
                             <h3 className="text-amber-500 uppercase tracking-widest text-[10px] font-bold mb-2 pl-1">{sub.name}</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
                               {sub.items.map(item => (
-                                <ItemRow key={item.id} item={item} allergenMap={allergenMap} currency={currency} onAdd={addToCart} onAddWithOptions={openOptionsPopup} onBuildYourOwn={openBuildPopup} onDrinkOptions={openDrinkPopup} onProteinOptions={openProteinPopup} cartQty={cartMap[item.id] || 0} />
+                                <ItemRow key={item.id} item={item} allergenMap={allergenMap} currency={currency} onAdd={openModifiers} onAddWithOptions={openOptionsPopup} onBuildYourOwn={openBuildPopup} onDrinkOptions={openDrinkPopup} onProteinOptions={openProteinPopup} onInfo={setInfoPopup} cartQty={cartMap[item.id] || 0} filters={filters} />
                               ))}
                             </div>
                           </div>
@@ -369,7 +456,7 @@ export default function MenuPage() {
                     ) : (
                       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
                         {(section.items || []).filter(item => !(section.name === 'Side Orders' && quickAddNames.includes(item.name))).map(item => (
-                          <ItemRow key={item.id} item={item} allergenMap={allergenMap} currency={currency} onAdd={addToCart} onAddWithOptions={openOptionsPopup} onBuildYourOwn={openBuildPopup} onDrinkOptions={openDrinkPopup} onProteinOptions={openProteinPopup} cartQty={cartMap[item.id] || 0} />
+                          <ItemRow key={item.id} item={item} allergenMap={allergenMap} currency={currency} onAdd={openModifiers} onAddWithOptions={openOptionsPopup} onBuildYourOwn={openBuildPopup} onDrinkOptions={openDrinkPopup} onProteinOptions={openProteinPopup} onInfo={setInfoPopup} cartQty={cartMap[item.id] || 0} filters={filters} />
                         ))}
                       </div>
                     )}
@@ -426,12 +513,12 @@ export default function MenuPage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-[10px] mb-1 text-stone-500 uppercase tracking-wider font-bold">Address</label>
+                          <label className="block text-[10px] mb-1 text-stone-500 uppercase tracking-wider font-bold">Address{form.orderType === 'delivery' && ' *'}</label>
                           <input
                             type="text" value={form.address}
                             onChange={e => setForm(f => ({ ...f, address: e.target.value }))}
-                            className="w-full px-3 py-2 bg-stone-900 border border-stone-700 rounded text-white text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
-                            placeholder="Delivery address"
+                            className={`w-full px-3 py-2 bg-stone-900 border rounded text-white text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 ${needsAddress ? 'border-red-500/60' : 'border-stone-700'}`}
+                            placeholder={form.orderType === 'delivery' ? 'Delivery address (required)' : 'Delivery address'}
                           />
                         </div>
                         <div className="flex gap-1.5">
@@ -459,11 +546,17 @@ export default function MenuPage() {
                       ) : (
                         <div className="space-y-1.5">
                           {cart.map(item => (
-                            <div key={item.id} className="flex items-center gap-2 bg-stone-900 rounded p-2 border border-stone-700">
-                              <div className="flex-1 min-w-0">
-                                <p className="font-medium text-white text-xs truncate">{item.name}</p>
-                                <p className="text-amber-500 text-xs font-semibold">{currency}{(item.price * item.quantity).toFixed(2)}</p>
-                              </div>
+                            <div key={item.id} className="flex items-center gap-2 bg-stone-900 rounded p-2 border border-stone-700 hover:border-stone-500 transition-colors">
+                              <button onClick={() => editCartLine(item)} title="Edit item" className="flex-1 min-w-0 text-left group/edit">
+                                <p className="font-medium text-white text-sm leading-tight flex items-start gap-1.5">
+                                  <span className="flex-1">{item.baseName ?? item.name}</span>
+                                  <Pencil size={12} className="flex-shrink-0 mt-0.5 text-stone-600 group-hover/edit:text-amber-400" />
+                                </p>
+                                {(item.modifiers?.length > 0 || item.note) && (
+                                  <p className="text-amber-300/80 text-xs mt-0.5">{[...(item.modifiers || []), ...(item.note ? [item.note] : [])].join(', ')}</p>
+                                )}
+                                <p className="text-amber-500 text-xs font-semibold mt-0.5">{currency}{(item.price * item.quantity).toFixed(2)}</p>
+                              </button>
                               <div className="flex items-center gap-1">
                                 <button onClick={() => updateQuantity(item.id, -1)} className="w-6 h-6 rounded bg-stone-700 hover:bg-stone-600 text-white flex items-center justify-center">
                                   <Minus size={12} />
@@ -502,9 +595,11 @@ export default function MenuPage() {
                       <span className="text-white">Total</span>
                       <span className="text-amber-500 text-lg">{currency}{cartTotal.toFixed(2)}</span>
                     </div>
+                    {needsAddress && <p className="text-red-400 text-xs">Delivery orders need an address</p>}
+                    {orderError && <p className="text-red-400 text-xs">{orderError}</p>}
                     <button
                       onClick={submitOrder}
-                      disabled={!form.customerName || !form.phone}
+                      disabled={!canSubmit}
                       className="w-full bg-green-600 hover:bg-green-500 disabled:bg-stone-700 disabled:text-stone-500 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded transition-colors flex items-center justify-center gap-2 uppercase tracking-wide text-xs"
                     >
                       <Send size={14} /> Place Order
@@ -527,7 +622,7 @@ export default function MenuPage() {
             </div>
             <button
               onClick={submitOrder}
-              disabled={!form.customerName || !form.phone}
+              disabled={!canSubmit}
               className="bg-amber-500 hover:bg-amber-400 disabled:bg-stone-700 disabled:text-stone-500 text-stone-900 font-bold px-4 py-2 rounded text-xs uppercase tracking-wide"
             >
               Place Order
@@ -547,6 +642,7 @@ export default function MenuPage() {
               </button>
             </div>
             <div className="p-4">
+              <AllergenBadges allergens={optionsPopup.item.allergens} allergenMap={allergenMap} activeFilters={filters} className="mb-3" />
               <p className="text-stone-400 text-xs mb-3 uppercase tracking-wider font-bold">
                 {optionsPopup.showSauces ? 'Choose a sauce' : 'Choose a style'}
               </p>
@@ -562,15 +658,21 @@ export default function MenuPage() {
                     </button>
                   ))
                 ) : (
-                  optionsPopup.item.options.map(opt => (
-                    <button
-                      key={opt}
-                      onClick={() => addWithOption(opt)}
-                      className="px-3 py-2.5 rounded-lg bg-stone-900 border border-stone-700 text-white text-xs font-medium hover:border-amber-500 hover:bg-amber-500/10 transition-all text-left"
-                    >
-                      {opt}
-                    </button>
-                  ))
+                  optionsPopup.item.options.map(opt => {
+                    const o = typeof opt === 'string' ? { name: opt } : opt;
+                    const unsafe = allergenStatus(o, filters) === 'unsafe';
+                    return (
+                      <button
+                        key={o.name}
+                        onClick={() => addWithOption(opt)}
+                        className={`px-3 py-2.5 rounded-lg border text-sm font-medium transition-all text-left ${
+                          unsafe ? 'bg-red-950/40 border-red-500/60 text-red-300 opacity-60' : 'bg-stone-900 border-stone-700 text-white hover:border-amber-500 hover:bg-amber-500/10'
+                        }`}
+                      >
+                        {o.name}
+                      </button>
+                    );
+                  })
                 )}
               </div>
             </div>
@@ -589,6 +691,7 @@ export default function MenuPage() {
               </button>
             </div>
             <div className="p-4 space-y-4">
+              <AllergenBadges allergens={buildPopup.protein ? mergeAllergens(buildPopup.sauceItem, buildPopup.protein) : buildPopup.sauceItem.allergens} allergenMap={allergenMap} activeFilters={filters} />
               <div className="flex gap-4">
                 {/* Sauce only sizes */}
                 <div className="flex-1">
@@ -629,7 +732,9 @@ export default function MenuPage() {
                         className={`w-full px-3 py-2 rounded-lg border text-xs font-medium transition-all text-left flex justify-between items-center ${
                           buildPopup.protein?.name === p.name && !buildPopup.size
                             ? 'border-amber-500 bg-amber-500/20 text-amber-400'
-                            : 'border-stone-700 bg-stone-900 text-white hover:border-amber-500 hover:bg-amber-500/10'
+                            : allergenStatus(p, filters) === 'unsafe'
+                              ? 'border-red-500/60 bg-red-950/40 text-red-300 opacity-60'
+                              : 'border-stone-700 bg-stone-900 text-white hover:border-amber-500 hover:bg-amber-500/10'
                         }`}
                       >
                         <span>{p.name}</span>
@@ -666,13 +771,18 @@ export default function MenuPage() {
               </button>
             </div>
             <div className="p-4">
+              <AllergenBadges allergens={proteinPopup.allergens} allergenMap={allergenMap} activeFilters={filters} className="mb-3" />
               <p className="text-stone-400 text-xs mb-3 uppercase tracking-wider font-bold">Choose a protein</p>
               <div className="space-y-2">
                 {proteinPopup.proteinOptions.map(protein => (
                   <button
                     key={protein.name}
                     onClick={() => addProteinChoice(protein)}
-                    className="w-full px-3 py-2.5 rounded-lg bg-stone-900 border border-stone-700 text-white text-xs font-medium hover:border-amber-500 hover:bg-amber-500/10 transition-all text-left flex justify-between items-center"
+                    className={`w-full px-3 py-2.5 rounded-lg border text-xs font-medium transition-all text-left flex justify-between items-center ${
+                      allergenStatus(protein, filters) === 'unsafe'
+                        ? 'bg-red-950/40 border-red-500/60 text-red-300 opacity-60'
+                        : 'bg-stone-900 border-stone-700 text-white hover:border-amber-500 hover:bg-amber-500/10'
+                    }`}
                   >
                     <span>{protein.name}</span>
                     <span className="text-stone-400">{currency}{protein.price.toFixed(2)}</span>
@@ -707,6 +817,114 @@ export default function MenuPage() {
                   </button>
                 ))}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modifier popup — final step before anything is added to the order */}
+      {modifierPopup && (() => {
+        const { item, selected, note, qty } = modifierPopup;
+        const unsafeHits = (item.allergens || []).filter(a => filters.includes(a) && !(item.removable || []).includes(a));
+        const autoMods = (item.allergens || []).filter(a => (item.removable || []).includes(a)).map(a => `No ${allergenMap[a]}`);
+        return (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setModifierPopup(null)}>
+            <div className="bg-stone-800 border border-stone-700 rounded-xl w-[420px] max-w-[90vw] shadow-2xl" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between px-4 py-3 border-b border-stone-700">
+                <h3 className="text-white font-bold text-base">{item.name} <span className="text-amber-500 ml-1">{currency}{item.price.toFixed(2)}</span></h3>
+                <button onClick={() => setModifierPopup(null)} className="text-stone-500 hover:text-white transition-colors"><X size={18} /></button>
+              </div>
+              <div className="p-4 space-y-4">
+                <AllergenBadges allergens={item.allergens} allergenMap={allergenMap} activeFilters={filters} />
+                {unsafeHits.length > 0 && (
+                  <div className="flex items-start gap-2 p-2.5 rounded-lg bg-red-500/15 border border-red-500/40 text-red-300 text-xs">
+                    <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" />
+                    <span>Contains <b>{unsafeHits.map(a => allergenMap[a]).join(', ')}</b> — cannot be made without.</span>
+                  </div>
+                )}
+                {autoMods.length > 0 && (
+                  <div>
+                    <p className="text-stone-400 text-xs mb-2 uppercase tracking-wider font-bold">Allergen requests</p>
+                    <div className="flex flex-wrap gap-2">
+                      {autoMods.map(mod => {
+                        const on = selected.includes(mod);
+                        return (
+                          <button key={mod} onClick={() => toggleModifier(mod)} className={`px-3 py-2 rounded-lg border text-sm font-medium transition-all ${on ? 'bg-amber-500 text-stone-900 border-amber-500' : 'bg-stone-900 text-white border-amber-500/50 hover:bg-amber-500/10'}`}>{mod}</button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+                <div>
+                  <p className="text-stone-400 text-xs mb-2 uppercase tracking-wider font-bold">Modifications</p>
+                  <div className="flex flex-wrap gap-2">
+                    {modifierOptions.map(mod => {
+                      const on = selected.includes(mod);
+                      return (
+                        <button key={mod} onClick={() => toggleModifier(mod)} className={`px-3 py-2 rounded-lg border text-sm font-medium transition-all ${on ? 'bg-amber-500 text-stone-900 border-amber-500' : 'bg-stone-900 text-white border-stone-700 hover:border-amber-500 hover:bg-amber-500/10'}`}>{mod}</button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <input
+                  type="text" value={note}
+                  onChange={e => setModifierPopup(p => ({ ...p, note: e.target.value }))}
+                  onKeyDown={e => { if (e.key === 'Enter') confirmModifiers(); }}
+                  autoFocus
+                  placeholder="Other request for this item..."
+                  className="w-full px-3 py-2 bg-stone-900 border border-stone-700 rounded text-white text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
+                />
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1 bg-stone-900 border border-stone-700 rounded-lg p-1">
+                    <button onClick={() => setModifierPopup(p => ({ ...p, qty: Math.max(1, p.qty - 1) }))} className="w-8 h-8 rounded bg-stone-700 hover:bg-stone-600 text-white flex items-center justify-center"><Minus size={14} /></button>
+                    <span className="w-8 text-center text-white font-bold">{qty}</span>
+                    <button onClick={() => setModifierPopup(p => ({ ...p, qty: p.qty + 1 }))} className="w-8 h-8 rounded bg-stone-700 hover:bg-stone-600 text-white flex items-center justify-center"><Plus size={14} /></button>
+                  </div>
+                  <button onClick={confirmModifiers} className="flex-1 py-2.5 rounded-lg bg-amber-500 text-stone-900 font-bold text-sm uppercase tracking-wide hover:bg-amber-400 transition-colors">
+                    {modifierPopup.editingId ? "Update" : "Add to Order"} — {currency}{(item.price * qty).toFixed(2)}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Allergen info popup */}
+      {infoPopup && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setInfoPopup(null)}>
+          <div className="bg-stone-800 border border-stone-700 rounded-xl w-[360px] max-w-[90vw] shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-stone-700">
+              <h3 className="text-white font-bold text-sm">{infoPopup.name}</h3>
+              <button onClick={() => setInfoPopup(null)} className="text-stone-500 hover:text-white transition-colors">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-4 space-y-3">
+              <div>
+                <p className="text-stone-400 text-xs mb-2 uppercase tracking-wider font-bold">Contains</p>
+                <AllergenBadges allergens={infoPopup.allergens} allergenMap={allergenMap} activeFilters={filters} />
+              </div>
+              {infoPopup.removable?.length > 0 && (
+                <div>
+                  <p className="text-stone-400 text-xs mb-2 uppercase tracking-wider font-bold">Can be left out on request</p>
+                  <AllergenBadges allergens={infoPopup.removable} allergenMap={allergenMap} />
+                </div>
+              )}
+              {infoPopup.proteinOptions?.length > 0 && (
+                <div>
+                  <p className="text-stone-400 text-xs mb-2 uppercase tracking-wider font-bold">Protein choices</p>
+                  <div className="space-y-1.5">
+                    {infoPopup.proteinOptions.map(p => (
+                      <div key={p.name} className="flex items-center justify-between gap-2 text-xs">
+                        <span className="text-white">{p.name}</span>
+                        <AllergenBadges allergens={p.allergens} allergenMap={allergenMap} activeFilters={filters} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <p className="text-stone-500 text-[11px] pt-2 border-t border-stone-700">Always confirm severe allergies with the kitchen. All dishes are prepared in a kitchen that handles every listed allergen.</p>
             </div>
           </div>
         </div>

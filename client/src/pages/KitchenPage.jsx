@@ -10,12 +10,15 @@ const STATUS_CONFIG = {
 
 const STATUS_FLOW = ['pending', 'preparing', 'ready', 'collected'];
 
+const todayISO = () => new Date().toISOString().slice(0, 10);
+
 export default function KitchenPage() {
   const [orders, setOrders] = useState([]);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState('active'); // active | today | <status> | history
 
   const fetchOrders = () => {
-    fetch('/api/orders')
+    const url = filter === 'history' ? '/api/orders' : `/api/orders?date=${todayISO()}`;
+    fetch(url)
       .then(res => res.json())
       .then(setOrders)
       .catch(console.error);
@@ -25,7 +28,7 @@ export default function KitchenPage() {
     fetchOrders();
     const interval = setInterval(fetchOrders, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [filter]);
 
   const updateStatus = async (id, status) => {
     await fetch(`/api/orders/${id}`, {
@@ -36,8 +39,9 @@ export default function KitchenPage() {
     fetchOrders();
   };
 
-  const deleteOrder = async (id) => {
-    await fetch(`/api/orders/${id}`, { method: 'DELETE' });
+  const deleteOrder = async (order) => {
+    if (!window.confirm(`Delete order #${order.id} for ${order.customerName} (€${order.total.toFixed(2)})? This cannot be undone.`)) return;
+    await fetch(`/api/orders/${order.id}`, { method: 'DELETE' });
     fetchOrders();
   };
 
@@ -46,7 +50,9 @@ export default function KitchenPage() {
     return idx < STATUS_FLOW.length - 1 ? STATUS_FLOW[idx + 1] : null;
   };
 
-  const filteredOrders = filter === 'all' ? orders : orders.filter(o => o.status === filter);
+  const filteredOrders = filter === 'active' ? orders.filter(o => o.status !== 'collected')
+    : filter === 'today' || filter === 'history' ? orders
+    : orders.filter(o => o.status === filter);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -65,11 +71,13 @@ export default function KitchenPage() {
             onChange={e => setFilter(e.target.value)}
             className="border border-stone-700 rounded px-3 py-2 text-sm bg-stone-800 text-white"
           >
-            <option value="all">All Orders</option>
+            <option value="active">Active (today)</option>
+            <option value="today">All today</option>
             <option value="pending">Pending</option>
             <option value="preparing">Preparing</option>
             <option value="ready">Ready</option>
             <option value="collected">Collected</option>
+            <option value="history">Full history</option>
           </select>
         </div>
       </div>
@@ -77,8 +85,8 @@ export default function KitchenPage() {
       {filteredOrders.length === 0 ? (
         <div className="text-center py-20 text-stone-600">
           <Clock size={48} className="mx-auto mb-4 opacity-50" />
-          <p className="text-lg text-stone-500">No orders yet</p>
-          <p className="text-sm text-stone-600">Orders will appear here when customers place them</p>
+          <p className="text-lg text-stone-500">{filter === 'active' ? 'No open orders' : 'No orders'}</p>
+          <p className="text-sm text-stone-600">{filter === 'active' ? 'New orders will appear here as they are placed' : 'Try a different filter'}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -136,7 +144,7 @@ export default function KitchenPage() {
                     <span className="font-bold text-amber-500 text-lg">€{order.total.toFixed(2)}</span>
                     <div className="flex gap-2">
                       <button
-                        onClick={() => deleteOrder(order.id)}
+                        onClick={() => deleteOrder(order)}
                         className="p-2 text-red-500 hover:bg-red-500/10 rounded transition-colors"
                         title="Delete order"
                       >

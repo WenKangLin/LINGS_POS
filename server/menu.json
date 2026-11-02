@@ -1,0 +1,1524 @@
+{
+  "allergens": {
+    "1": "Gluten",
+    "2": "Crustaceans",
+    "3": "Egg",
+    "4": "Fish",
+    "5": "Peanuts",
+    "6": "Soya Bean",
+    "7": "Milk",
+    "8": "Nuts",
+    "9": "Celery",
+    "10": "Mustard",
+    "11": "Sesame",
+    "12": "Sulphur Dioxide",
+    "13": "Lupin",
+    "14": "Molluscs"
+  },
+  "currency": "€",
+  "modifiers": [
+    "No Veg",
+    "No Spice",
+    "No Onion",
+    "No Garlic",
+    "No Carrot",
+    "Separate Sauce"
+  ],
+  "sections": [
+    {
+      "name": "Starters",
+      "items": [
+        {
+          "id": 1,
+          "name": "Spring Roll",
+          "price": 4.2,
+          "allergens": [
+            1,
+            3,
+            6,
+            14
+          ]
+        },
+        {
+          "id": 2,
+          "name": "Vegetable Roll",
+          "price": 4.2,
+          "allergens": [
+            1,
+            3,
+            6,
+            14
+          ],
+          "vegetarian": true
+        },
+        {
+          "id": 3,
+          "name": "Chicken Cheese Roll",
+          "price": 5.5,
+          "allergens": [
+            1,
+            3,
+            7
+          ]
+        },
+        {
+          "id": 4,
+          "name": "Skewered Chicken Satay",
+          "price": 7.5,
+          "allergens": [
+            1,
+            3,
+            5,
+            6,
+            7,
+            11
+          ]
+        },
+        {
+          "id": 5,
+          "name": "Crispy Won Ton",
+          "price": 6.5,
+          "allergens": [
+            1,
+            2,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 6,
+          "name": "Sesame Prawn Toast",
+          "price": 6.5,
+          "allergens": [
+            1,
+            2,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 7,
+          "name": "Deep Fried Mushrooms",
+          "price": 5.5,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ],
+          "vegetarian": true
+        },
+        {
+          "id": 8,
+          "name": "Chicken Wings",
+          "price": 7.5,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ],
+          "options": [
+            "Salt & Chilli",
+            "BBQ",
+            "Honey",
+            "Sweet & Sour",
+            "Plain",
+            "Other"
+          ]
+        },
+        {
+          "id": 9,
+          "name": "Salt & Chilli Shredded Chicken",
+          "price": 7.5,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 10,
+          "name": "Salt & Chilli King Prawns",
+          "price": 7.5,
+          "allergens": [
+            1,
+            2,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 11,
+          "name": "Salt & Chilli Squid",
+          "price": 7.5,
+          "allergens": [
+            1,
+            3,
+            6,
+            11,
+            14
+          ]
+        },
+        {
+          "id": 12,
+          "name": "Spare Ribs",
+          "price": 8.5,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ],
+          "options": [
+            "Salt & Chilli",
+            "BBQ",
+            "Honey",
+            "Sweet & Sour",
+            "Plain",
+            "Other"
+          ]
+        },
+        {
+          "id": 13,
+          "name": "Crispy Aromatic Duck (1/4)",
+          "price": 11,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 14,
+          "name": "Crispy Aromatic Duck (1/2)",
+          "price": 20,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Soups",
+      "items": [
+        {
+          "id": 15,
+          "name": "Chicken Sweetcorn Soup",
+          "price": 4.2,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ],
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 16,
+          "name": "Chicken Mushroom Soup",
+          "price": 4.2,
+          "allergens": [
+            1,
+            6,
+            11
+          ],
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 17,
+          "name": "Chicken Noodle Soup",
+          "price": 4.2,
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 18,
+          "name": "Won Ton Soup",
+          "price": 5,
+          "allergens": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            11,
+            14
+          ],
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 19,
+          "name": "Hot & Sour Soup",
+          "price": 5,
+          "allergens": [
+            1,
+            2,
+            3,
+            6,
+            11
+          ],
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 20,
+          "name": "Tom Yum Prawn Soup",
+          "price": 5,
+          "allergens": [
+            1,
+            2,
+            3,
+            4,
+            6,
+            11
+          ],
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Build Your Own",
+      "buildYourOwn": true,
+      "proteins": [
+        {
+          "name": "Chicken",
+          "price": 12,
+          "allergens": []
+        },
+        {
+          "name": "Beef",
+          "price": 12.4,
+          "allergens": []
+        },
+        {
+          "name": "King Prawn",
+          "price": 12.8,
+          "allergens": [
+            2
+          ]
+        },
+        {
+          "name": "House Special",
+          "price": 12.8,
+          "allergens": [
+            2
+          ]
+        },
+        {
+          "name": "Duck",
+          "price": 14,
+          "allergens": []
+        },
+        {
+          "name": "Tofu",
+          "price": 11,
+          "allergens": [
+            6
+          ]
+        },
+        {
+          "name": "Mixed Vegetable",
+          "price": 11,
+          "allergens": []
+        },
+        {
+          "name": "Shredded Chicken",
+          "price": 12.2,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "name": "Shredded Beef",
+          "price": 12.8,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "name": "Cantonese Chicken",
+          "price": 12,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "name": "Cantonese King Prawn",
+          "price": 12.8,
+          "allergens": [
+            1,
+            2,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "name": "Crispy Chicken",
+          "price": 12.2,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ]
+        }
+      ],
+      "sizes": {
+        "small": 1.5,
+        "medium": 3,
+        "large": 3.5,
+        "smallTray": 5,
+        "largeTray": 6
+      },
+      "items": [
+        {
+          "id": 21,
+          "name": "Curry",
+          "allergens": [
+            1,
+            3,
+            6,
+            7,
+            9,
+            10,
+            11
+          ],
+          "buildYourOwn": true
+        },
+        {
+          "id": 22,
+          "name": "Sweet & Sour",
+          "allergens": [
+            1,
+            6,
+            9,
+            11
+          ],
+          "buildYourOwn": true
+        },
+        {
+          "id": 23,
+          "name": "BBQ",
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ],
+          "buildYourOwn": true
+        },
+        {
+          "id": 24,
+          "name": "Satay",
+          "allergens": [
+            1,
+            3,
+            5,
+            6,
+            7
+          ],
+          "buildYourOwn": true
+        },
+        {
+          "id": 25,
+          "name": "Black Bean",
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "buildYourOwn": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 26,
+          "name": "Garlic Black Pepper",
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "buildYourOwn": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 27,
+          "name": "Ginger & Spring Onion",
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "buildYourOwn": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 28,
+          "name": "Oyster",
+          "allergens": [
+            1,
+            3,
+            6,
+            10,
+            11,
+            14
+          ],
+          "buildYourOwn": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 29,
+          "name": "Mushroom",
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "buildYourOwn": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 30,
+          "name": "Cashew Nut",
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "buildYourOwn": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 31,
+          "name": "Szechuan",
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "buildYourOwn": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 32,
+          "name": "Hot Garlic",
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "buildYourOwn": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 33,
+          "name": "Thai Green Curry",
+          "allergens": [
+            1,
+            3,
+            7,
+            10,
+            14
+          ],
+          "buildYourOwn": true
+        },
+        {
+          "id": 34,
+          "name": "Thai Sweet Chilli & Lemongrass",
+          "allergens": [
+            1,
+            3,
+            6,
+            9,
+            11
+          ],
+          "buildYourOwn": true
+        },
+        {
+          "id": 35,
+          "name": "Peking",
+          "allergens": [
+            1,
+            3,
+            6,
+            7,
+            9,
+            10,
+            11
+          ],
+          "buildYourOwn": true
+        },
+        {
+          "id": 36,
+          "name": "Plum",
+          "allergens": [
+            1,
+            3,
+            6,
+            7,
+            9,
+            10,
+            11
+          ],
+          "buildYourOwn": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 37,
+          "name": "Orange",
+          "allergens": [],
+          "buildYourOwn": true,
+          "removable": []
+        },
+        {
+          "id": 38,
+          "name": "Lemon",
+          "allergens": [],
+          "buildYourOwn": true,
+          "removable": []
+        },
+        {
+          "id": 39,
+          "name": "Pineapple",
+          "allergens": [
+            1,
+            6,
+            9,
+            11
+          ],
+          "buildYourOwn": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 40,
+          "name": "Honey",
+          "allergens": [],
+          "buildYourOwn": true,
+          "removable": []
+        }
+      ]
+    },
+    {
+      "name": "Chef's Special Dishes",
+      "items": [
+        {
+          "id": 41,
+          "name": "Thai Sweet Chilli & Lemongrass",
+          "allergens": [
+            1,
+            3,
+            6,
+            9,
+            11
+          ],
+          "proteinOptions": [
+            {
+              "name": "Crispy Chicken",
+              "price": 12.8,
+              "allergens": [
+                1,
+                3,
+                6,
+                11
+              ]
+            },
+            {
+              "name": "Crispy Beef",
+              "price": 13.4,
+              "allergens": [
+                1,
+                3,
+                6,
+                11
+              ]
+            },
+            {
+              "name": "Crispy King Prawn",
+              "price": 13.8,
+              "allergens": [
+                1,
+                2,
+                3,
+                6,
+                11
+              ]
+            }
+          ]
+        },
+        {
+          "id": 42,
+          "name": "Thai Green Curry",
+          "allergens": [
+            1,
+            3,
+            7,
+            10,
+            14
+          ],
+          "proteinOptions": [
+            {
+              "name": "Chicken",
+              "price": 12.8,
+              "allergens": []
+            },
+            {
+              "name": "Beef",
+              "price": 13.4,
+              "allergens": []
+            },
+            {
+              "name": "King Prawn",
+              "price": 13.8,
+              "allergens": [
+                2
+              ]
+            }
+          ]
+        },
+        {
+          "id": 43,
+          "name": "Amber Fire",
+          "allergens": [
+            1,
+            5,
+            6,
+            11,
+            14
+          ],
+          "proteinOptions": [
+            {
+              "name": "Chicken",
+              "price": 12.8,
+              "allergens": []
+            },
+            {
+              "name": "Beef",
+              "price": 13.4,
+              "allergens": []
+            },
+            {
+              "name": "King Prawn",
+              "price": 13.8,
+              "allergens": [
+                2
+              ]
+            },
+            {
+              "name": "Shredded Chicken",
+              "price": 13.8,
+              "allergens": [
+                1,
+                3,
+                6,
+                11
+              ]
+            },
+            {
+              "name": "Shredded Beef",
+              "price": 14.4,
+              "allergens": [
+                1,
+                3,
+                6,
+                11
+              ]
+            }
+          ]
+        },
+        {
+          "id": 44,
+          "name": "Roast Pork Chinese Style",
+          "price": 12.8,
+          "allergens": [
+            1,
+            6,
+            9,
+            11
+          ]
+        },
+        {
+          "id": 45,
+          "name": "Roast Duck Cantonese Style",
+          "price": 14,
+          "allergens": [
+            1,
+            6,
+            11
+          ]
+        }
+      ],
+      "mainCourse": true
+    },
+    {
+      "name": "Sweet & Sour Dishes",
+      "items": [
+        {
+          "id": 46,
+          "name": "Sweet & Sour Chicken Balls",
+          "price": 12,
+          "allergens": [
+            1,
+            3,
+            6,
+            9,
+            11
+          ]
+        },
+        {
+          "id": 47,
+          "name": "Cantonese Sweet & Sour Chicken",
+          "price": 12,
+          "allergens": [
+            1,
+            3,
+            6,
+            9,
+            11
+          ]
+        },
+        {
+          "id": 48,
+          "name": "Cantonese Sweet & Sour King Prawn",
+          "price": 12.8,
+          "allergens": [
+            1,
+            2,
+            3,
+            6,
+            9,
+            11
+          ]
+        },
+        {
+          "id": 49,
+          "name": "Crispy Shredded Chicken with Sweet Chilli",
+          "price": 12.2,
+          "allergens": [
+            1,
+            3,
+            6,
+            7,
+            9,
+            10,
+            11
+          ]
+        },
+        {
+          "id": 50,
+          "name": "Crispy Chicken with Plum Sauce",
+          "price": 12.2,
+          "allergens": [
+            1,
+            3,
+            6,
+            8,
+            11,
+            14
+          ]
+        },
+        {
+          "id": 51,
+          "name": "Crispy Chicken with Orange Sauce",
+          "price": 12.2,
+          "allergens": [
+            1,
+            3,
+            6,
+            11,
+            14
+          ]
+        },
+        {
+          "id": 52,
+          "name": "Crispy Chicken with Lemon Sauce",
+          "price": 12.2,
+          "allergens": [
+            1,
+            3,
+            6,
+            11,
+            14
+          ]
+        },
+        {
+          "id": 53,
+          "name": "Crispy Chicken with Pineapple Sauce",
+          "price": 12.2,
+          "allergens": [
+            1,
+            3,
+            6,
+            11,
+            14
+          ]
+        }
+      ],
+      "mainCourse": true
+    },
+    {
+      "name": "Chow Mein Dishes",
+      "items": [
+        {
+          "id": 54,
+          "name": "Chicken Chow Mein",
+          "price": 12,
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 55,
+          "name": "Beef Chow Mein",
+          "price": 12.4,
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 56,
+          "name": "King Prawn Chow Mein",
+          "price": 12.8,
+          "allergens": [
+            1,
+            2,
+            6,
+            11,
+            14
+          ],
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 57,
+          "name": "House Special Chow Mein",
+          "price": 12.8,
+          "allergens": [
+            1,
+            2,
+            6,
+            11,
+            14
+          ],
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 58,
+          "name": "Singapore Chow Mein",
+          "price": 12.8,
+          "allergens": [
+            1,
+            2,
+            6,
+            11,
+            14
+          ],
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 59,
+          "name": "Mixed Vegetable Chow Mein",
+          "price": 11,
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "vegetarian": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Fried Rice Dishes",
+      "items": [
+        {
+          "id": 60,
+          "name": "Chicken Fried Rice",
+          "price": 12,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ],
+          "removable": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 61,
+          "name": "Beef Fried Rice",
+          "price": 12.4,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ],
+          "removable": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 62,
+          "name": "King Prawn Fried Rice",
+          "price": 12.8,
+          "allergens": [
+            1,
+            2,
+            3,
+            6,
+            11
+          ],
+          "removable": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 63,
+          "name": "House Special Fried Rice",
+          "price": 12.8,
+          "allergens": [
+            1,
+            2,
+            3,
+            6,
+            11
+          ],
+          "removable": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 64,
+          "name": "Singapore Fried Rice",
+          "price": 12.8,
+          "allergens": [
+            1,
+            2,
+            3,
+            6,
+            11
+          ],
+          "removable": [
+            1,
+            3,
+            6,
+            11
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Children's Dishes",
+      "items": [
+        {
+          "id": 65,
+          "name": "Chicken Goujons & Chips",
+          "price": 7,
+          "allergens": [
+            1
+          ]
+        },
+        {
+          "id": 66,
+          "name": "Chicken Nuggets & Chips",
+          "price": 7,
+          "allergens": [
+            1
+          ]
+        },
+        {
+          "id": 67,
+          "name": "Sausages & Chips",
+          "price": 7,
+          "allergens": [
+            1
+          ]
+        },
+        {
+          "id": 68,
+          "name": "Chicken Balls (4) & Chips",
+          "price": 7,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Side Orders",
+      "items": [
+        {
+          "id": 69,
+          "name": "Mega Box",
+          "price": 15,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 70,
+          "name": "Hot Spicy Bag",
+          "price": 10.5,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 71,
+          "name": "Tofu Spicy Bag",
+          "price": 10.5,
+          "allergens": [
+            6
+          ],
+          "vegetarian": true
+        },
+        {
+          "id": 72,
+          "name": "Chicken Wrap",
+          "price": 8,
+          "allergens": [
+            1,
+            3,
+            6,
+            7,
+            9,
+            10,
+            11
+          ]
+        },
+        {
+          "id": 73,
+          "name": "2 in 1",
+          "price": 5.5,
+          "allergens": []
+        },
+        {
+          "id": 74,
+          "name": "3 in 1",
+          "price": 6.5,
+          "allergens": []
+        },
+        {
+          "id": 75,
+          "name": "4 in 1",
+          "price": 8.5,
+          "allergens": []
+        },
+        {
+          "id": 76,
+          "name": "Chicken Balls (4)",
+          "price": 4.5,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 77,
+          "name": "Chicken Balls (8)",
+          "price": 8.4,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 78,
+          "name": "Onion Rings",
+          "price": 4.8,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 79,
+          "name": "1/2 & 1/2 (Chips & Rice)",
+          "price": 3.3,
+          "allergens": [],
+          "vegetarian": true,
+          "options": [
+            {
+              "name": "Boiled Rice",
+              "allergens": []
+            },
+            {
+              "name": "Egg Fried Rice",
+              "allergens": [
+                1,
+                3,
+                6,
+                11
+              ],
+              "removable": [
+                1,
+                3,
+                6,
+                11
+              ]
+            }
+          ],
+          "skipModifiers": true
+        },
+        {
+          "id": 80,
+          "name": "Chips",
+          "price": 3.3,
+          "allergens": [],
+          "vegetarian": true
+        },
+        {
+          "id": 81,
+          "name": "Boiled Rice",
+          "price": 3.3,
+          "allergens": [],
+          "vegetarian": true
+        },
+        {
+          "id": 82,
+          "name": "Egg Fried Rice",
+          "price": 3.8,
+          "allergens": [
+            1,
+            3,
+            6,
+            11
+          ],
+          "vegetarian": true,
+          "removable": [
+            1,
+            3,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 83,
+          "name": "Fried Noodles",
+          "price": 4.8,
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 84,
+          "name": "Salt & Chilli Chips",
+          "price": 5.5,
+          "allergens": []
+        },
+        {
+          "id": 85,
+          "name": "Stir Fried Vegetables",
+          "price": 4.8,
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "vegetarian": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 86,
+          "name": "Stir Fried Mushrooms",
+          "price": 4.8,
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "vegetarian": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 87,
+          "name": "Stir Fried Onions",
+          "price": 4.8,
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "vegetarian": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 88,
+          "name": "Stir Fried Beansprouts",
+          "price": 4.8,
+          "allergens": [
+            1,
+            6,
+            11,
+            14
+          ],
+          "vegetarian": true,
+          "removable": [
+            1,
+            6,
+            11
+          ]
+        },
+        {
+          "id": 89,
+          "name": "Prawn Crackers",
+          "price": 2.5,
+          "allergens": [
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Drinks",
+      "items": [
+        {
+          "id": 90,
+          "name": "Can",
+          "price": 2,
+          "allergens": [],
+          "drinkOptions": [
+            "Coke",
+            "Coke Zero",
+            "Diet Coke",
+            "Fanta",
+            "Club Orange",
+            "7up",
+            "7up Free"
+          ],
+          "drinkPrefix": ""
+        },
+        {
+          "id": 91,
+          "name": "Large Bottle",
+          "price": 4.5,
+          "allergens": [],
+          "drinkOptions": [
+            "Coke",
+            "Coke Zero",
+            "Diet Coke",
+            "Fanta",
+            "Club Orange",
+            "7up",
+            "7up Free"
+          ],
+          "drinkPrefix": "Large "
+        },
+        {
+          "id": 92,
+          "name": "Lucozade",
+          "price": 2.8,
+          "allergens": []
+        },
+        {
+          "id": 93,
+          "name": "Lucozade Sport",
+          "price": 2.8,
+          "allergens": []
+        },
+        {
+          "id": 94,
+          "name": "Monster",
+          "price": 3,
+          "allergens": []
+        },
+        {
+          "id": 95,
+          "name": "Red Bull",
+          "price": 3,
+          "allergens": []
+        },
+        {
+          "id": 96,
+          "name": "Mineral Water",
+          "price": 2,
+          "allergens": []
+        },
+        {
+          "id": 97,
+          "name": "Capri Sun",
+          "price": 1.2,
+          "allergens": []
+        }
+      ]
+    }
+  ]
+}
